@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include "users.c"
+
 
 typedef struct Graph {
     int numUsers;
@@ -13,7 +13,7 @@ Graph* createGraph(int numUsers, User *usersHashTable) {
     Graph *graph = (Graph *)malloc(sizeof(Graph));
     graph->numUsers = numUsers;
     graph->users = usersHashTable;
-    graph->adjMatrix = (bool **)malloc(numUsers * sizeof(bool *));
+    graph->adjMatrix = (bool **)calloc(numUsers, sizeof(bool *));
     for (int i = 0; i < numUsers; i++) {
         graph->adjMatrix[i] = (bool *)calloc(numUsers, sizeof(bool));
     }
@@ -30,17 +30,26 @@ void buildGraph(Graph *graph) {
                     if (user1->purchasedProducts[k] == user2->purchasedProducts[l]) {
                         graph->adjMatrix[i][j] = true;
                         graph->adjMatrix[j][i] = true;
-                        break;
+                        goto nextPair; // Break both inner loops
                     }
                 }
             }
+        nextPair:
+            ;
         }
     }
 }
 
 void recommendProducts(Graph *graph, int userID) {
+    if (userID < 0 || userID >= graph->numUsers) {
+        printf("Invalid UserID: %d\n", userID);
+        return;
+    }
+
     User *currentUser = &graph->users[userID];
     printf("Recommendations for UserID: %d\n", userID);
+
+    bool *recommendedProducts = (bool *)calloc(1000, sizeof(bool)); 
 
     for (int i = 0; i < graph->numUsers; i++) {
         if (graph->adjMatrix[userID][i]) {
@@ -56,10 +65,13 @@ void recommendProducts(Graph *graph, int userID) {
                     }
                 }
 
-                if (!alreadyPurchased) {
+                if (!alreadyPurchased && !recommendedProducts[productID]) {
                     printf("Product ID: %d\n", productID);
+                    recommendedProducts[productID] = true;
                 }
             }
         }
     }
+
+    free(recommendedProducts);
 }
