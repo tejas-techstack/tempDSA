@@ -43,4 +43,17 @@ The recommendation system involves the implementation of a collaborative filteri
 
 OUTPUT: 
 
+![image](https://github.com/user-attachments/assets/a32590e5-83bf-49e8-b80e-2058b5e94619)
+
+![image](https://github.com/user-attachments/assets/9ed49c37-3c8c-45ff-90c4-2e2c9afa976f)
+
+![image](https://github.com/user-attachments/assets/b8e29b61-0f4e-46f2-a1c5-bef07c1f893c)
+
+![image](https://github.com/user-attachments/assets/142d3838-696b-4462-af00-79da09fc8a77)
+
+![image](https://github.com/user-attachments/assets/50ea6fec-32a5-4f6a-b20b-21a9eb2e1d86)
+
+
+
+
 
