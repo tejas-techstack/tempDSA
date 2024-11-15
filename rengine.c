@@ -30,7 +30,7 @@ void buildGraph(Graph *graph) {
                     if (user1->purchasedProducts[k] == user2->purchasedProducts[l]) {
                         graph->adjMatrix[i][j] = true;
                         graph->adjMatrix[j][i] = true;
-                        goto nextPair; // Break both inner loops
+                        goto nextPair; 
                     }
                 }
             }
@@ -40,6 +40,35 @@ void buildGraph(Graph *graph) {
     }
 }
 
+void updateGraph(Graph *graph, int userID, int productID) {
+    if (userID < 0 || userID >= graph->numUsers) {
+        printf("Invalid UserID: %d\n", userID);
+        return;
+    }
+
+    User *currentUser = &graph->users[userID];
+
+    for (int i = 0; i < graph->numUsers; i++) {
+        if (i == userID) {
+            continue; 
+        }
+
+        User *otherUser = &graph->users[i];
+        bool sharedPurchase = false;
+
+        for (int j = 0; j < otherUser->purchasedCount; j++) {
+            if (otherUser->purchasedProducts[j] == productID) {
+                sharedPurchase = true;
+                break;
+            }
+        }
+
+        if (sharedPurchase) {
+            graph->adjMatrix[userID][i] = true;
+            graph->adjMatrix[i][userID] = true;
+        }
+    }
+}
 void recommendProducts(Graph *graph, int userID) {
     if (userID < 0 || userID >= graph->numUsers) {
         printf("Invalid UserID: %d\n", userID);

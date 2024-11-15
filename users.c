@@ -37,12 +37,24 @@ void addUser(int userID, char *name, char *email, User *ht) {
     int i = 0;
     int hashValue = hash(userID);
     int index = hashValue;
-    while (ht[hashValue].flag != 0 && ht[hashValue].userID != userID && i < MAX_SIZE) {
+
+    while (ht[hashValue].flag != 0 && i < MAX_SIZE) {
+        if (ht[hashValue].userID == userID) {
+            printf("User already exists with UserID: %d\n", userID);
+            return;
+        }
         i++;
         hashValue = linear_probing(index, i);
     }
 
-    if (ht[hashValue].flag == 0 || ht[hashValue].userID == userID) {
+    i = 0;
+    hashValue = index;
+    while (ht[hashValue].flag != 0 && i < MAX_SIZE) {
+        i++;
+        hashValue = linear_probing(index, i);
+    }
+
+    if (ht[hashValue].flag == 0) {
         ht[hashValue].flag = 1;
         ht[hashValue].userID = userID;
         strcpy(ht[hashValue].name, name);

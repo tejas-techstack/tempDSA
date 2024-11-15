@@ -35,7 +35,6 @@ void addProduct(int PID, const char *name, const char *category, int inventory, 
         hashTable[hash].flag = 1;
         hashTable[hash].category = strdup(category);
         hashTable[hash].inventory = inventory;
-        printf("The data %d is inserted at %d\n", PID, hash);
     } else {
         printf("\nData cannot be inserted\n");
     }

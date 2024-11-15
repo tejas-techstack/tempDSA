@@ -101,8 +101,7 @@ int main() {
                 printf("User created and logged in as UserID: %d\n", currentUser->userID);
                 break;
             }
-
-            case 2: {
+           case 2: {
                 printf("Enter UserID to switch to: ");
                 scanf("%d", &userID);
                 currentUser = search(userID, usersHashTable);
@@ -157,16 +156,18 @@ int main() {
                     }
 
                     case 2: {
-                        displayProducts(productHashTable);
-                        printf("Enter PID of the product to purchase: ");
-                        int purchasePID;
-                        scanf("%d", &purchasePID);
-                        trackPurchase(purchaseHistory, purchasePID);
-                        addPurchasedProduct(currentUser, purchasePID);
-                        printf("Purchased product with PID: %d\n", purchasePID);
-                        break;
-                    }
+                      displayProducts(productHashTable);
+                      printf("Enter PID of the product to purchase: ");
+                      int purchasePID;
+                      scanf("%d", &purchasePID);
+                      trackPurchase(purchaseHistory, purchasePID);
+                      addPurchasedProduct(currentUser, purchasePID);
+                      printf("Purchased product with PID: %d\n", purchasePID);
 
+                      updateGraph(userGraph, currentUser->userID, purchasePID);
+                      break;
+                    }
+                  
                     case 3:
                         printf("Browsing History:\n");
                         displayBrowsingHistory(userID, usersHashTable);
