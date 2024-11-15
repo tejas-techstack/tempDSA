@@ -4,9 +4,9 @@
 
 #define MAX_SIZE 1000
 
-typedef struct Node {
+typedef struct node {
     int PID;
-    int *name;
+    char *name;
     int flag;
     char *category;
     int inventory;

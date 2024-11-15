@@ -100,25 +100,25 @@ void inorder(Node *root) {
     }
 }
 
-int main() {
-    SplayTree *browsingHistory = (SplayTree *)malloc(sizeof(SplayTree));
-    browsingHistory->root = NULL;
+// int main() {
+//     SplayTree *browsingHistory = (SplayTree *)malloc(sizeof(SplayTree));
+//     browsingHistory->root = NULL;
 
-    SplayTree *purchaseHistory = (SplayTree *)malloc(sizeof(SplayTree));
-    purchaseHistory->root = NULL;
+//     SplayTree *purchaseHistory = (SplayTree *)malloc(sizeof(SplayTree));
+//     purchaseHistory->root = NULL;
 
-    trackBrowsing(browsingHistory, 101); 
-    trackBrowsing(browsingHistory, 102); 
-    trackPurchase(purchaseHistory, 201);  
+//     trackBrowsing(browsingHistory, 101); 
+//     trackBrowsing(browsingHistory, 102); 
+//     trackPurchase(purchaseHistory, 201);  
 
-    printf("Browsing History Inorder Traversal:\n");
-    inorder(browsingHistory->root);  
+//     printf("Browsing History Inorder Traversal:\n");
+//     inorder(browsingHistory->root);  
 
-    printf("\nPurchase History Inorder Traversal:\n");
-    inorder(purchaseHistory->root);   
+//     printf("\nPurchase History Inorder Traversal:\n");
+//     inorder(purchaseHistory->root);   
 
-    free(browsingHistory);
-    free(purchaseHistory);
+//     free(browsingHistory);
+//     free(purchaseHistory);
 
-    return 0;
-}
+//     return 0;
+// }
