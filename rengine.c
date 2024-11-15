@@ -2,75 +2,162 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define SIZE 100
+#define MAX_USERS 1000
+#define MAX_RECOMMENDATIONS 10
 
-typedef struct user {
-    char id[30];
-    char name[50];
-    char email[50];
-    struct user *next;
+typedef struct Node {
+    int productID;
+    struct Node *left, *right;
+} Node;
+
+typedef struct SplayTree {
+    Node *root;
+} SplayTree;
+
+typedef struct User {
+    int userID;
+    char name[100];
+    char email[100];
+    SplayTree browsingHistory;
+    SplayTree purchaseHistory;
+    int flag;
 } User;
 
-int hash(char *id) {
-    int hash = 0;
-    while (*id) {
-        hash += *id++;
-    }
-    return hash % SIZE;
+int hash(int userID) {
+    return userID % MAX_USERS;
 }
 
-int add_user(User *table[], char *id, char *name, char *email) {
-    int index = hash(id);
-    User *new = (User *)malloc(sizeof(User));
-
-    if (new == NULL) {
-        printf("Memory allocation failed.\n");
-        return -1;
-    }
-
-    strcpy(new->id, id);
-    strcpy(new->name, name);
-    strcpy(new->email, email);
-    new->next = table[index];
-    table[index] = new;
-
-    return 0;
+int linear_probing(int hashValue, int i) {
+    return (hashValue + i) % MAX_USERS;
 }
 
-User *get_user(User *table[], char *id) {
-    int ind = hash(id);
-    User *curr = table[ind];
-    while (curr) {
-        if (strcmp(curr->id, id) == 0)
-            return curr;
-        curr = curr->next;
-    }
-    return NULL;
+Node *newNode(int productID) {
+    Node *node = (Node *)malloc(sizeof(Node));
+    node->productID = productID;
+    node->left = node->right = NULL;
+    return node;
 }
 
-/*
-int main() {
-    User *table[SIZE] = {NULL};
+Node *rightRotate(Node *x) {
+    Node *y = x->left;
+    x->left = y->right;
+    y->right = x;
+    return y;
+}
 
-    add_user(table, "001", "Alice", "alice@example.com");
-    add_user(table, "002", "Bob", "bob@example.com");
+Node *leftRotate(Node *x) {
+    Node *y = x->right;
+    x->right = y->left;
+    y->left = x;
+    return y;
+}
 
-    User *user = get_user(table, "001");
-    if (user != NULL) {
-        printf("User found: %s, %s\n", user->name, user->email);
-    } else {
-        printf("User not found.\n");
-    }
+Node *splay(Node *root, int productID) {
+    if (!root || root->productID == productID)
+        return root;
 
-    for (int i = 0; i < SIZE; i++) {
-        User *curr = table[i];
-        while (curr) {
-            User *temp = curr;
-            curr = curr->next;
-            free(temp);
+    if (productID < root->productID) {
+        if (!root->left) return root;
+
+        if (productID < root->left->productID) {
+            root->left->left = splay(root->left->left, productID);
+            root = rightRotate(root);
+        } else if (productID > root->left->productID) {
+            root->left->right = splay(root->left->right, productID);
+            if (root->left->right)
+                root->left = leftRotate(root->left);
         }
+        return (root->left) ? rightRotate(root) : root;
+    } else {
+        if (!root->right) return root;
+
+        if (productID > root->right->productID) {
+            root->right->right = splay(root->right->right, productID);
+            root = leftRotate(root);
+        } else if (productID < root->right->productID) {
+            root->right->left = splay(root->right->left, productID);
+            if (root->right->left)
+                root->right = rightRotate(root->right);
+        }
+        return (root->right) ? leftRotate(root) : root;
     }
+}
+
+Node *insert(Node *root, int productID) {
+    if (!root)
+        return newNode(productID);
+
+    root = splay(root, productID);
+
+    if (root->productID == productID)
+        return root;
+
+    Node *new = newNode(productID);
+
+    if (productID < root->productID) {
+        new->right = root;
+        new->left = root->left;
+        root->left = NULL;
+    } else {
+        new->left = root;
+        new->right = root->right;
+        root->right = NULL;
+    }
+    return new;
+}
+
+void trackBrowsing(SplayTree *tree, int productID) {
+    tree->root = insert(tree->root, productID);
+}
+
+void trackPurchase(SplayTree *tree, int productID) {
+    tree->root = insert(tree->root, productID);
+}
+
+void addUser(int userID, char *name, char *email, User *userTable) {
+    int i = 0;
+    int hashValue = hash(userID);
+    while (userTable[hashValue].flag != 0 && userTable[hashValue].userID != userID && i < MAX_USERS) {
+        i++;
+        hashValue = linear_probing(hashValue, i);
+    }
+
+    if (userTable[hashValue].flag == 0) {
+        userTable[hashValue].flag = 1;
+        userTable[hashValue].userID = userID;
+        strcpy(userTable[hashValue].name, name);
+        strcpy(userTable[hashValue].email, email);
+        userTable[hashValue].browsingHistory.root = NULL;
+        userTable[hashValue].purchaseHistory.root = NULL;
+        printf("User added successfully: %s (%d)\n", name, userID);
+    } else {
+        printf("UserID %d already exists!\n", userID);
+    }
+}
+
+void recommendProducts(SplayTree *browsingHistory, SplayTree *purchaseHistory) {
+    printf("Recommendations based on browsing history:\n");
+    if (browsingHistory->root) {
+        printf("  - Product ID: %d\n", browsingHistory->root->productID);
+    }
+    printf("Recommendations based on purchase history:\n");
+    if (purchaseHistory->root) {
+        printf("  - Product ID: %d\n", purchaseHistory->root->productID);
+    }
+}
+
+int main() {
+    User userTable[MAX_USERS] = {0};
+
+    addUser(101, "Alice", "alice@example.com", userTable);
+    addUser(102, "Bob", "bob@example.com", userTable);
+
+    trackBrowsing(&userTable[hash(101)].browsingHistory, 201);
+    trackBrowsing(&userTable[hash(101)].browsingHistory, 202);
+    trackPurchase(&userTable[hash(101)].purchaseHistory, 301);
+
+    printf("\nUser Recommendations:\n");
+    recommendProducts(&userTable[hash(101)].browsingHistory, &userTable[hash(101)].purchaseHistory);
 
     return 0;
 }
-*/
