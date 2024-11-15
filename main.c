@@ -20,7 +20,9 @@ int main(){
 
     Node *productHashTable = (Node *)malloc(sizeof(Node) * MAX_SIZE);
     initialize_hashTable(productHashTable);
-
+    while(
+    )
+    
     // Add products to productHashTable
 
     // Add users to usersHashTable
