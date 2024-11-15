@@ -98,22 +98,30 @@ void display(User *ht) {
         }
     }
 }
-
 void addBrowsedProduct(User *user, int productID) {
     if (user->browsedCount < MAX_PRODUCTS) {
-        user->browsedProducts[user->browsedCount++] = productID;
+        user->browsedCount++;
     } else {
-        printf("Cannot add more browsed products for UserID: %d\n", user->userID);
+        printf("Replacing the oldest browsed product for UserID: %d\n", user->userID);
     }
+    for (int i = user->browsedCount - 1; i > 0; i--) {
+        user->browsedProducts[i] = user->browsedProducts[i - 1];
+    }
+    user->browsedProducts[0] = productID;
 }
 
 void addPurchasedProduct(User *user, int productID) {
     if (user->purchasedCount < MAX_PRODUCTS) {
-        user->purchasedProducts[user->purchasedCount++] = productID;
+        user->purchasedCount++;
     } else {
-        printf("Cannot add more purchased products for UserID: %d\n", user->userID);
+        printf("Replacing the oldest purchased product for UserID: %d\n", user->userID);
     }
+    for (int i = user->purchasedCount - 1; i > 0; i--) {
+        user->purchasedProducts[i] = user->purchasedProducts[i - 1];
+    }
+    user->purchasedProducts[0] = productID;
 }
+
 
 void trackUserActivity(User *user, int browsedProductID, int purchasedProductID) {
     addBrowsedProduct(user, browsedProductID);

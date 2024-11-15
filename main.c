@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "History.c"  // Assuming this contains the Splay Tree implementation
-#include "users.c"    // Assuming this contains the User management implementation
-#include "product.c"  // Assuming this contains the Product management implementation
+#include "History.c" 
+#include "users.c"    
+#include "product.c"
+#include "rengine.c" 
 
 #define MAX_SIZE 1000
 
@@ -30,6 +31,10 @@ int main() {
 
     NODE *productHashTable = (NODE *)malloc(sizeof(NODE) * MAX_SIZE);
     initialize_hashTable(productHashTable);
+    int numUsers = MAX_SIZE; // Or the actual number of users
+    Graph *userGraph = createGraph(numUsers, usersHashTable);
+    buildGraph(userGraph);
+
 
   
     addProduct(101, "Laptop", "Electronics", 50, productHashTable);
@@ -86,6 +91,7 @@ int main() {
                 scanf("%d", &browsePID);
                 trackBrowsing(browsingHistory, browsePID);
                 printf("Browsed product with PID: %d\n", browsePID);
+                findProduct(browsePID,productHashTable);
                 break;
 
             case 2: 
@@ -94,6 +100,7 @@ int main() {
                 int purchasePID;
                 scanf("%d", &purchasePID);
                 trackPurchase(purchaseHistory, purchasePID);
+
                 addPurchasedProduct(currentUser, purchasePID); 
                 printf("Purchased product with PID: %d\n", purchasePID);
                 break;
@@ -107,12 +114,24 @@ int main() {
                 printf("Purchase History:\n");
                 inorder(purchaseHistory->root);
                 break;
+            case 5:
+                printf("Enter your UserID: ");
+                scanf("%d", &userID);
+                recommendProducts(userGraph, userID);
+                break;
 
-            case 5: 
+            case 6: 
                 free(browsingHistory);
                 free(purchaseHistory);
                 free(usersHashTable);
                 free(productHashTable);
+                for (int i = 0; i < userGraph->numUsers; i++) 
+                {
+                free(userGraph->adjMatrix[i]);
+                }
+                free(userGraph->adjMatrix);
+                free(userGraph);
+
                 exit(0);
 
             default:

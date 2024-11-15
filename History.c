@@ -9,6 +9,7 @@ typedef struct Node {
 
 typedef struct SplayTree {
     Node* root;
+    
 } SplayTree;
 
 Node* newNode(int key) {
